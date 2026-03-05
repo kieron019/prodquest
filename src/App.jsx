@@ -3,6 +3,7 @@ import { SignedIn, SignedOut, SignInButton, UserButton, useAuth, useUser } from 
 import ProdQuestApp from "./ProdQuestV35";
 import { startStripeCheckout } from "./lib/billing";
 import { ensureUserProfile, saveSession } from "./lib/data";
+import { flags } from "./lib/env";
 
 function AuthScreen() {
   return (
@@ -67,6 +68,10 @@ function SignedInApp() {
 }
 
 export default function App() {
+  if (flags.demoMode) {
+    return <ProdQuestApp />;
+  }
+
   return (
     <>
       <SignedOut>

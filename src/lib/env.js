@@ -1,14 +1,12 @@
-const required = (name) => {
-  const value = import.meta.env[name];
-  if (!value) {
-    throw new Error(`Missing environment variable: ${name}`);
-  }
-  return value;
+export const env = {
+  clerkPublishableKey: import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || "",
+  supabaseUrl: import.meta.env.VITE_SUPABASE_URL || "",
+  supabaseAnonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
+  appUrl: import.meta.env.VITE_APP_URL || "http://localhost:5173",
 };
 
-export const env = {
-  clerkPublishableKey: required("VITE_CLERK_PUBLISHABLE_KEY"),
-  supabaseUrl: required("VITE_SUPABASE_URL"),
-  supabaseAnonKey: required("VITE_SUPABASE_ANON_KEY"),
-  appUrl: import.meta.env.VITE_APP_URL || "http://localhost:5173",
+export const flags = {
+  hasClerk: Boolean(env.clerkPublishableKey),
+  hasSupabase: Boolean(env.supabaseUrl && env.supabaseAnonKey),
+  demoMode: !env.clerkPublishableKey,
 };
