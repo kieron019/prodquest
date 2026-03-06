@@ -68,3 +68,5 @@ pm run check:env locally to confirm all required keys are set before deploy.
 2. Log a focus session and verify row appears in `focus_sessions`.
 3. Click `Upgrade to Pro` and complete test checkout.
 4. Confirm `app_users.is_pro` flips to `true`.
+
+<!-- redeploy trigger -->
