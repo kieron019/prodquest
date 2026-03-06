@@ -5,8 +5,12 @@ export const env = {
   appUrl: import.meta.env.VITE_APP_URL || "http://localhost:5173",
 };
 
+const hasClerk = Boolean(env.clerkPublishableKey);
+const hasSupabase = Boolean(env.supabaseUrl && env.supabaseAnonKey);
+
 export const flags = {
-  hasClerk: Boolean(env.clerkPublishableKey),
-  hasSupabase: Boolean(env.supabaseUrl && env.supabaseAnonKey),
-  demoMode: !env.clerkPublishableKey,
+  hasClerk,
+  hasSupabase,
+  useSupabaseAuth: !hasClerk && hasSupabase,
+  demoMode: !hasClerk && !hasSupabase,
 };

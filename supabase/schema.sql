@@ -11,6 +11,9 @@ create table if not exists public.app_users (
   updated_at timestamptz not null default now()
 );
 
+alter table public.app_users
+  add column if not exists is_admin boolean not null default false;
+
 create table if not exists public.focus_sessions (
   id bigint generated always as identity primary key,
   clerk_user_id text not null,
@@ -23,16 +26,44 @@ create table if not exists public.focus_sessions (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.admin_events (
+  id bigint generated always as identity primary key,
+  name text not null,
+  description text,
+  start_at timestamptz not null,
+  end_at timestamptz not null,
+  status text not null default 'upcoming' check (status in ('upcoming', 'live', 'completed', 'cancelled')),
+  created_by text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create index if not exists idx_focus_sessions_user_created
   on public.focus_sessions (clerk_user_id, created_at desc);
 
+create index if not exists idx_admin_events_start
+  on public.admin_events (start_at desc);
+
 alter table public.app_users enable row level security;
 alter table public.focus_sessions enable row level security;
+alter table public.admin_events enable row level security;
 
 drop policy if exists "Users can read own profile" on public.app_users;
 create policy "Users can read own profile"
   on public.app_users for select
   using (auth.jwt() ->> 'sub' = clerk_user_id);
+
+drop policy if exists "Admins can read all profiles" on public.app_users;
+create policy "Admins can read all profiles"
+  on public.app_users for select
+  using (
+    exists (
+      select 1
+      from public.app_users admin_user
+      where admin_user.clerk_user_id = auth.uid()::text
+        and admin_user.is_admin = true
+    )
+  );
 
 drop policy if exists "Service role manages profiles" on public.app_users;
 create policy "Service role manages profiles"
@@ -45,6 +76,18 @@ create policy "Users can read own sessions"
   on public.focus_sessions for select
   using (auth.jwt() ->> 'sub' = clerk_user_id);
 
+drop policy if exists "Admins can read all sessions" on public.focus_sessions;
+create policy "Admins can read all sessions"
+  on public.focus_sessions for select
+  using (
+    exists (
+      select 1
+      from public.app_users admin_user
+      where admin_user.clerk_user_id = auth.uid()::text
+        and admin_user.is_admin = true
+    )
+  );
+
 drop policy if exists "Users can insert own sessions" on public.focus_sessions;
 create policy "Users can insert own sessions"
   on public.focus_sessions for insert
@@ -55,3 +98,28 @@ create policy "Service role manages sessions"
   on public.focus_sessions for all
   using (auth.role() = 'service_role')
   with check (auth.role() = 'service_role');
+
+drop policy if exists "Anyone can read events" on public.admin_events;
+create policy "Anyone can read events"
+  on public.admin_events for select
+  using (true);
+
+drop policy if exists "Admins manage events" on public.admin_events;
+create policy "Admins manage events"
+  on public.admin_events for all
+  using (
+    exists (
+      select 1
+      from public.app_users admin_user
+      where admin_user.clerk_user_id = auth.uid()::text
+        and admin_user.is_admin = true
+    )
+  )
+  with check (
+    exists (
+      select 1
+      from public.app_users admin_user
+      where admin_user.clerk_user_id = auth.uid()::text
+        and admin_user.is_admin = true
+    )
+  );

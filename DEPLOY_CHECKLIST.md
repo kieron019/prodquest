@@ -50,6 +50,10 @@ Required in production:
 
 `APP_URL` and `VITE_APP_URL` should match your deployed origin.
 
+
+Run 
+pm run check:env locally to confirm all required keys are set before deploy.
+
 ## 5. Deploy
 
 1. Push repo to GitHub.
