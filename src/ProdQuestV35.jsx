@@ -131,8 +131,8 @@ const CSS = `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root {
-  --bg:      #18161200;
-  --bg-solid:#18161200;
+  --bg:      #181612;
+  --bg-solid:#181612;
   --surface: #1f1d19;
   --raised:  #28251f;
   --high:    #33302a;
@@ -166,7 +166,7 @@ const CSS = `
 
 html,body{
   height:100%;
-  background:#18161200;
+  background:#181612;
   color:var(--ink);
   overflow-x:hidden;
 }
@@ -1063,7 +1063,7 @@ function Sidebar({ page, nav, running, me }) {
   );
 }
 
-// ─── SESSION CARD component ───────────────────────────────────────────────────
+// ─── SESSION CARD component ───────────────────────────────────────────────���───
 function SCard({ s }) {
   const cc = CAT_COLORS[s.cat] || "var(--ink3)";
   const durH = Math.floor(s.dur/60);
