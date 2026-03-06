@@ -231,7 +231,7 @@ body {
 
 /* ── MAIN ── */
 .main{flex:1;overflow-y:auto;min-width:0}
-.page{padding:24px 22px;max-width:900px;padding-bottom:90px}
+.page{padding:24px 22px;width:100%;padding-bottom:90px}
 
 /* ── SMART HEADER BANNER ── */
 .ctx-banner {
@@ -1063,7 +1063,7 @@ function Sidebar({ page, nav, running, me }) {
   );
 }
 
-// ─── SESSION CARD component ───────────────────────────────────────────────���───
+// ─── SESSION CARD component ───────────────────────────────────────────────�����───
 function SCard({ s }) {
   const cc = CAT_COLORS[s.cat] || "var(--ink3)";
   const durH = Math.floor(s.dur/60);
